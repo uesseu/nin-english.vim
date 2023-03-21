@@ -1,4 +1,4 @@
-# jpn-eng.vim
+# nin-english.vim
 ![](sample.gif)
 
 A vim plugin for Japanese person, who has to write English ('A`).  

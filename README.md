@@ -1,4 +1,4 @@
-# jpn-eng.vim
+# nin-english.vim
 [English README](README_en.md)
 
 ![](sample.gif)
