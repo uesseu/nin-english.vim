@@ -1,5 +1,7 @@
-# jpn-eng.vim
-A vim plugin for Japanese person, who has to write English ('A`).  
+# nin-english.vim
+![](sample.gif)
+
+A vim plugin for me, who is stupid Jap monkey, to write English.
 It is based on EJDict, wonderful english-japanese dictionary.  
 
 This plugin offers
@@ -49,7 +51,7 @@ This command download and construct dictionary from this repo.
 https://github.com/kujirahand/EJDict
 
 ```vim
-EnglishInstall
+call InstallEJDict()
 ```
 
 Thanks to EJDict! It is public domain!  
@@ -61,6 +63,38 @@ https://kujirahand.com/web-tools/EJDictFreeDL.php
 
 However, this plugin does not use the dictionary of the url.
 
+# Example
+This is part of example.
+
+```vim
+" Registration of plugin to ddc.
+call ddc#custom#patch_global('sources', ['vim-lsp', 'around', 'ninenglish'])
+
+" Setting of path
+let g:nin_english#dict_dir = '/home/[user]/.local/share/EJDict'
+call ddc#custom#patch_global('sourceParams', #{
+  \   ninenglish: #{dict_fname: 'g:nin_english#dict_dir'}})
+
+" Whole setting of ddc
+call ddc#custom#patch_global('sourceOptions', #{
+  \   _: #{
+  \     matchers: ['matcher_fuzzy'],
+  \     sorters: ['sorter_fuzzy'],
+  \     converters: ['converter_fuzzy']
+  \   },
+  \   around: #{ mark: 'Around'},
+  \   ninenglish: #{ mark: 'English'},
+  \   vim-lsp: #{
+  \     mark: 'LSP',
+  \     forceCompletionPattern: '\w+|\.\w*|:\w*|->\w*' },
+  \ })
+
+" Key binding of hover.
+nnoremap <buffer> K :call NinCloseFloat()<CR>:call EnglishSearch()<CR>
+
+" Pseudo syntax hilight
+call NinEnglishHilight()
+```
 # Auto Completion
 If you use ddc, ddc completes automatically.  
 Ddc completes automatically and quickly.  
@@ -91,19 +125,20 @@ I did not set the key bind of hover.
 This function searches the word on cursor.
 
 ```vim
-call EnglishSearchDeno()
+call EnglishSearch()
 ```
 
-And this command makes 'K' hover like function.
-
+However, this function does not close float window.  
+And so, closing function, named 'NinCloseHoverFloat' is needed.  
+this command makes 'K' hover like function.  
 ```vim
-nnoremap <buffer> K :call EnglishSearch()<CR>
+nnoremap <buffer> K :call NinCloseHoverFloat()<CR>:call EnglishSearch()<CR>
 ```
 
-# Costom dictionary
-If you want to make costom dictionary named 'a', call bellow.
+# Custom dictionary
+If you want to make custom dictionary named 'a', call bellow.
 ```vim
-call EnglishCostomDictEdit('a')
+call EnglishCustomDictEdit('a')
 ```
 
 The format is like this.
@@ -117,15 +152,19 @@ For example...
 example	例/見本/見せしめ
 ```
 
-If you want to show list of costom dictionaries, call bellow.
+If you want to show list of custom dictionaries, call bellow.
 ```vim
-call EnglishCostomDictList()
+call EnglishCustomDictList()
 ```
 
-If you want to delete a costom dictionary named 'a', call bellow.
+If you want to delete a custom dictionary named 'a', call bellow.
 ```vim
-call EnglishCostomDictDelete('a')
+call EnglishCustomDictDelete('a')
 ```
+
+The custom dictionaries are placed in 'scr' directory.
+And named like this 'custom-<name>'.
+
 # Pseudo syntax hilight
 Running syntax hilight of such language as English is not easy.  
 It must be slow and not easy to write program.  
@@ -146,7 +185,7 @@ EJDict is TSV format like below.
 Perhaps, it may be useful for people in other country,
 if there is compatible dictionary.
 But I am not sure.  
-I am just a Japanese monkey, furthermore am not engineer.
+I am just a stupid Jap monkey, furthermore am not engineer.
 
 # License
 License of this software, which is not great, is MIT.  

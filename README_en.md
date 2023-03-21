@@ -1,7 +1,7 @@
 # nin-english.vim
 ![](sample.gif)
 
-A vim plugin for Japanese person, who has to write English ('A`).  
+A vim plugin for me, who is stupid Jap monkey, to write English.
 It is based on EJDict, wonderful english-japanese dictionary.  
 
 This plugin offers
@@ -185,7 +185,7 @@ EJDict is TSV format like below.
 Perhaps, it may be useful for people in other country,
 if there is compatible dictionary.
 But I am not sure.  
-I am just a Japanese monkey, furthermore am not engineer.
+I am just a stupid Jap monkey, furthermore am not engineer.
 
 # License
 License of this software, which is not great, is MIT.  
