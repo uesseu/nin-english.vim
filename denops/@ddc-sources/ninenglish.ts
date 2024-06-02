@@ -1,15 +1,7 @@
 import {
   BaseSource,
-  DdcOptions,
   Item,
-  SourceOptions,
-} from "https://deno.land/x/ddc_vim@v3.2.0/types.ts";
-import {
-  assertEquals,
-  Denops,
-  vars,
-  fn,
-} from "https://deno.land/x/ddc_vim@v3.2.0/deps.ts";
+} from "https://deno.land/x/ddc_vim@v5.0.0/types.ts";
 
 let loaded = false
 let dict: Object[] = []
@@ -33,18 +25,14 @@ const setupDict = async (dict_path: string) => {
   return dict
 }
 
-type Params = {
-};
+type Params = { };
 
 export class Source extends BaseSource<Params> {
-  override async gather(args: {
-    denops: Denops;
-    options: DdcOptions;
-    sourceOptions: SourceOptions;
-    sourceParams: Params;
-    completeStr: string;
-  }): Promise<Item[]> {
+  override async gather(args: any): any {
     await setupDict(args.sourceParams['dict_dir'])
     return dict
+  }
+  params(args) {
+    return {};
   }
 }
