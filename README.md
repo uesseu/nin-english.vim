@@ -70,28 +70,6 @@ https://kujirahand.com/web-tools/EJDictFreeDL.php
 # 設定例
 一旦設定例を示します。
 ```vim
-" ddcへの登録
-call ddc#custom#patch_global('sources', ['vim-lsp', 'around', 'ninenglish'])
-
-" 辞書のパスの設定
-let g:nin_english#dict_dir = '/home/[user]/.local/share/EJDict'
-call ddc#custom#patch_global('sourceParams', #{
-  \   ninenglish: #{dict_fname: 'g:nin_english#dict_dir'}})
-
-" ddc全体の設定
-call ddc#custom#patch_global('sourceOptions', #{
-  \   _: #{
-  \     matchers: ['matcher_fuzzy'],
-  \     sorters: ['sorter_fuzzy'],
-  \     converters: ['converter_fuzzy']
-  \   },
-  \   around: #{ mark: 'Around'},
-  \   ninenglish: #{ mark: 'English'},
-  \   vim-lsp: #{
-  \     mark: 'LSP',
-  \     forceCompletionPattern: '\w+|\.\w*|:\w*|->\w*' },
-  \ })
-
 " Hoverの設定
 nnoremap <buffer> K :call NinCloseFloat()<CR>:call EnglishSearch()<CR>
 
