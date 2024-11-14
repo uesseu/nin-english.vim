@@ -1,7 +1,23 @@
-# nin-english.vim
-![](sample.gif)
+*nin-english.vim*         English plugin for japanese!
 
-A vim plugin for me, who is stupid Jap monkey, to write English.
+Author: Shoichiro Nakanishi <sheepwing@kyudai.jp>
+License: MIT license
+
+==============================================================================
+CONTENTS                                                 *nin-english-index*
+
+Introduction		|nin-english-intro|
+Install			|nin-english-install|
+INSTALL DICTIONARY      |nin-english-install-dictionary|
+Configuration of DCC    |nin-english-configure-ddc|
+Search words		|EnglishSearch|
+Custom dictionary       |CustomDictionary|
+Syntax highlit          |pseudo-syntax-hilight|
+Format of EJDict        |format-ejdict|
+
+==============================================================================
+INTRODUCTION						 *nin-english-intro*
+A vim plugin for me, to write English.
 It is based on EJDict, wonderful english-japanese dictionary.  
 
 This plugin offers
@@ -15,178 +31,167 @@ The speed of search is relatively good.
 Because these functions are made by deno.  
 Especially, speed of deno is good.  
 
-# Dependency
+==============================================================================
+INSTALL                                               *nin-english-install*
+
+It depends on below.
 - git
 - deno
 - denops
 
-Denops plugin must be installed.  
-(Of cource, it must not be vim-tiny.)  
-
+Denops plugin must be installed. (Of cource, it must not be vim-tiny.)  
 Git is needed only for downloading dictionary.
 
-# Install
 for vimplug
-
-```
-Plug 'uesseu/nin-english-vim'
-```
+    Plug 'uesseu/nin-english-vim'
 
 for dein
-```
-call dein#add('uesseu/nin-english-vim')
-```
+    call dein#add('uesseu/nin-english-vim')
 
 And then, you should set 'g:nin_english#dict_dir'.  
 It should be path of dictionary.  
+    let g:nin_english#dict_dir = '/home/[user]/.local/share/EJDict'
+    let g:nin_english#dict_fname = 'dict.txt'
 
-```vim
-let g:nin_english#dict_dir = '/home/[user]/.local/share/EJDict'
-let g:nin_english#dict_fname = 'dict.txt'
-```
+==============================================================================
+INSTALL DICTIONARY                             *nin-english-install-dictionary*
 
-# Install dictionary
 After you install nin-english.vim, EJDict is needed to run.  
 This command download and construct dictionary from this repo.  
 https://github.com/kujirahand/EJDict
 
-```vim
-call InstallEJDict()
-```
+Please run below in vim.
+    :call InstallEJDict()
 
 Thanks to EJDict! It is public domain!  
-
 If you want to install dictionary manually,
 this dictionary can be downloaded from here.  
 
 https://kujirahand.com/web-tools/EJDictFreeDL.php
-
 However, this plugin does not use the dictionary of the url.
 
-# Example
-This is part of example.
+==============================================================================
+Configuration of DCC                          *nin-english-configure-ddc*
 
-```vim
-" Registration of plugin to ddc.
-call ddc#custom#patch_global('sources', ['vim-lsp', 'around', 'ninenglish'])
-
-" Setting of path
-let g:nin_english#dict_dir = '/home/[user]/.local/share/EJDict'
-call ddc#custom#patch_global('sourceParams', #{
-  \   ninenglish: #{dict_fname: 'g:nin_english#dict_dir'}})
-
-" Whole setting of ddc
-call ddc#custom#patch_global('sourceOptions', #{
-  \   _: #{
-  \     matchers: ['matcher_fuzzy'],
-  \     sorters: ['sorter_fuzzy'],
-  \     converters: ['converter_fuzzy']
-  \   },
-  \   around: #{ mark: 'Around'},
-  \   ninenglish: #{ mark: 'English'},
-  \   vim-lsp: #{
-  \     mark: 'LSP',
-  \     forceCompletionPattern: '\w+|\.\w*|:\w*|->\w*' },
-  \ })
-
-" Key binding of hover.
-nnoremap <buffer> K :call NinCloseFloat()<CR>:call EnglishSearch()<CR>
-
-" Pseudo syntax hilight
-call NinEnglishHilight()
-```
-# Auto Completion
-If you use ddc, ddc completes automatically.  
-Ddc completes automatically and quickly.  
-However, configuration may be difficult a little.  
-This example involves vim-lsp and around plugin.  
-Please insert g:nin_english#dict_path into sourceParams.
-
-```vim
-call ddc#custom#patch_global('sources', ['vim-lsp', 'around', 'ninenglish'])
-call ddc#custom#patch_global('sourceOptions', #{
-  \   _: #{
-  \     matchers: ['matcher_fuzzy'],
-  \     sorters: ['sorter_fuzzy'],
-  \     converters: ['converter_fuzzy']
-  \   },
-  \   around: #{ mark: 'Around'},
-  \   ninenglish: #{ mark: 'English'},
-  \   vim-lsp: #{
-  \     mark: 'LSP',
-  \     forceCompletionPattern: '\w+|\.\w*|:\w*|->\w*' },
-  \ })
-call ddc#custom#patch_global('sourceParams', #{
-  \   ninenglish: #{dict_fname: 'g:nin_english#dict_dir'}})
-```
-
-# Search words
-I did not set the key bind of hover.  
-This function searches the word on cursor.
-
-```vim
-call EnglishSearch()
-```
+Example:
+>
+    let g:nin_english#dict_dir = $HOME . '/.local/share/EJDict'
+    autocmd CompleteDone * silent! pclose!
+    function! s:start_ddc()
+      call ddc#custom#patch_global('ui', 'native')
+      call ddc#custom#patch_global('sourceParams',
+        \ #{around: #{ maxSize: 500 },
+        \   ninenglish: #{dict_dir: g:nin_english#dict_dir}
+        \ })
+      call ddc#custom#patch_global('sources', ['vim-lsp', 'around', 'ninenglish'])
+      call ddc#custom#patch_global('sourceOptions', #{
+        \   _: #{
+        \     matchers: ['matcher_fuzzy'],
+        \     sorters: ['sorter_fuzzy'],
+        \     converters: ['converter_fuzzy'],
+        \     minAutoCompleteLength: 1
+        \   },
+        \   around: #{ mark: 'Around'},
+        \   skkeleton: #{ 
+        \     mark: 'skkeleton',
+        \     matchers: [],
+        \     sorters: [],
+        \     converters: [],
+        \     isVolatile: v:true,
+        \     minAutoCompleteLength: 1,
+        \   },
+        \   ninenglish: #{ mark: 'English'},
+        \   vim-lsp: #{ mark: 'LSP',
+        \     forceCompletionPattern: '\w+|\.\w*|:\w*|->\w*' },
+        \ })
+      call ddc#custom#patch_filetype(['c', 'cpp'], 'sources',
+        \ ['around', 'clangd'])
+    call ddc#custom#patch_filetype(['c', 'cpp'], 'sourceOptions', #{
+        \   clangd: #{ mark: 'C' },
+        \ })
+      call ddc#enable()
+    endfunction
+    if v:vim_did_enter
+      call s:start_ddc()
+    else
+      au VimEnter * call s:start_ddc()
+    endif
+<
+==============================================================================
+Search words
+                                                     *EnglishSearch*
+EnglishSearch()
+        I did not set the key bind of hover.  
+        This function searches the word on cursor.
 
 However, this function does not close float window.  
 And so, closing function, named 'NinCloseHoverFloat' is needed.  
 this command makes 'K' hover like function.  
-```vim
-nnoremap <buffer> K :call NinCloseHoverFloat()<CR>:call EnglishSearch()<CR>
-```
+This is an Example:
+>
+  nnoremap <buffer> K :call NinCloseHoverFloat()<CR>:call EnglishSearch()<CR>
+<
 
-# Custom dictionary
+==============================================================================
+Custom dictionary
+                                                     *CustomDictionary*
+                                                     *EnglishCustomDictEdit()*
 If you want to make custom dictionary named 'a', call bellow.
-```vim
-call EnglishCustomDictEdit('a')
-```
+>
+  call EnglishCustomDictEdit('a')
+<
 
 The format is like this.
-
-```
-<word><tab><line1>/<line2>/<line3>/...
-```
+>
+  <word><tab><line1>/<line2>/<line3>/...
+<
 For example...
-
-```
-example	例/見本/見せしめ
-```
-
+>
+  example	例/見本/見せしめ
+<
+                                                     *EnglishCustomDictList()*
 If you want to show list of custom dictionaries, call bellow.
-```vim
-call EnglishCustomDictList()
-```
+>
+  call EnglishCustomDictList()
 
 If you want to delete a custom dictionary named 'a', call bellow.
-```vim
-call EnglishCustomDictDelete('a')
-```
+                                                     *EnglishCustomDictDelete()*
+  call EnglishCustomDictDelete('a')
+
 
 The custom dictionaries are placed in 'scr' directory.
 And named like this 'custom-<name>'.
 
-# Pseudo syntax hilight
+==============================================================================
+Pseudo syntax hilight
+                                                     *pseudo-syntax-hilight*
 Running syntax hilight of such language as English is not easy.  
 It must be slow and not easy to write program.  
-And so, I made pseudo syntax hilight.  
-This can be run by this command.
+And so, I made pseudo syntax hilight. This can be run by this command.
 
-```vim
-call NinEnglishHilight()
-```
-# EJDict format
+Hilight English
+                                                     *NinEnglishHilight()*
+NinEnglishHilight()
+        Enable pseudo syntax hilight. This is not real syntax hilight.
+
+==============================================================================
+Format of EJDict
+                                                     *format-ejdict*
 The dictionary must be TSV format.
 EJDict is TSV format like below.
 
-```
 [word][tab][mean1/mean2/mean3/...]
-```
 
 Perhaps, it may be useful for people in other country,
 if there is compatible dictionary.
 But I am not sure.  
 I am just a stupid Jap monkey, furthermore am not engineer.
 
-# License
-License of this software, which is not great, is MIT.  
+==============================================================================
+License
+
+License of this software is MIT.  
 However, license of EJDict is not MIT.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
